@@ -3,11 +3,25 @@ var inquirer = require('inquirer');
 const cTable = require('console.table');
 
 
+// var connection = mysql.createConnection({
+//     host: "localhost",
+
+//     // Your port; if not 3306
+//     port: 3306,
+
+//     // Your username
+//     user: "root",
+
+//     // Your password
+//     password: "root",
+//     database: "employeeTracker_DB"
+//     // REMEBER TO ADD DATABASE HERE TO REFERENCE!!!!!!
+// });
 var connection = mysql.createConnection({
     host: "localhost",
 
     // Your port; if not 3306
-    port: 3306,
+    port: 8889,
 
     // Your username
     user: "root",
@@ -93,47 +107,67 @@ function addDepts() {
                 type: "input",
                 message: "What department would you like to add?"
             }
-        ])
+        ]).then(function(answers){
 
-    console.log("Inserting a new department...\n");
-    var query = connection.query()
-    // ??????????????????????????
+            console.log("Inserting a new department...\n");
+            var query = connection.query("INSERT INTO department SET ?",
+            {
+                name: answers.deptName
+            },
+            function (err, res) {
+                if (err) throw err;
+                start();
+                //   connection.end();
+            })
 
+        })
 
-    // logs the actual query being run
-    console.log(query.sql);
 }
 
 function addRoles() {
-    inquirer
+
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+        // Log all results of the SELECT statement
+        console.table(res);
+        //res.map(function)
+        inquirer
         .prompt([
             {
-                name: "roleTitle",
+                name: "title",
                 type: "input",
                 message: "What role would you like to add?"
             },
             {
-                name: "roleSalary",
+                name: "salary",
                 type: "number",
                 message: "What is the salary for this role?"
             },
             {
-                name: "roleDept",
+                name: "department_id",
                 type: "input",
                 message: "What is the department for this role?"
-            }
+            },
+            // {
+            //     name: "department_id",
+            //     type: "list",
+            //     message: "What is the department for this role?",
+            //     choices: [{name: "sales", value: 1}]
+            // }
 
-        ])
+        ]).then(function(answers){
 
+            console.log("Inserting a new role...\n");
+            var query = connection.query("INSERT INTO role SET ?",
+            answers,
+            function (err, res) {
+                if (err) throw err;
+                start();
+                //   connection.end();
+            })
 
-    console.log("Inserting a new role...\n");
-    var query = connection.query()
-    // ??????????????????????????
-
-
-
-    // logs the actual query being run
-    console.log(query.sql);
+        })
+    });
 }
 
 
@@ -217,7 +251,7 @@ function viewDepts() {
 
 function viewRoles() {
     console.log("Selecting all roles...\n");
-    connection.query("SELECT * FROM role", function (err, res) {
+    connection.query("SELECT role.id, role.title, role.salary, department.name AS department FROM role LEFT JOIN department ON role.department_id = department.id", function (err, res) {
         if (err) throw err;
         // Log all results of the SELECT statement
         console.table(res);
@@ -228,7 +262,7 @@ function viewRoles() {
 
 function viewEmployees() {
     console.log("Selecting all employees...\n");
-    connection.query("SELECT * FROM employee", function (err, res) {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name, CONCAT(manager.first_name, \" \", manager.last_name) AS manager FROM employee LEFT JOIN employee manager ON employee.manager_id = manager.id", function (err, res) {
         if (err) throw err;
         // Log all results of the SELECT statement
         console.table(res);
