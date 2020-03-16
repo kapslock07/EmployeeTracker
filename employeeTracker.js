@@ -53,8 +53,127 @@ function start() {
             }
         });
 }
-
+// ----------------------------------------------
 // ADD THE ADDSOMETHING FUNCTION HERE!!!!!
+function addSomething() {
+
+    inquirer
+        .prompt({
+            name: "add",
+            type: "rawlist",
+            message: "What would you like to add?",
+            choices: [
+                "Departments",
+                "Roles",
+                "Employees"
+            ]
+        })
+        .then(function (answer) {
+            switch (answer.add) {
+                case "Departments":
+                    addDepts();
+                    break;
+
+                case "Roles":
+                    addRoles();
+                    break;
+
+                case "Employees":
+                    addEmployees();
+                    break;
+            }
+        });
+}
+
+function addDepts() {
+    inquirer
+        .prompt([
+            {
+                name: "deptName",
+                type: "input",
+                message: "What department would you like to add?"
+            }
+        ])
+
+    console.log("Inserting a new department...\n");
+    var query = connection.query()
+    // ??????????????????????????
+
+
+    // logs the actual query being run
+    console.log(query.sql);
+}
+
+function addRoles() {
+    inquirer
+        .prompt([
+            {
+                name: "roleTitle",
+                type: "input",
+                message: "What role would you like to add?"
+            },
+            {
+                name: "roleSalary",
+                type: "number",
+                message: "What is the salary for this role?"
+            },
+            {
+                name: "roleDept",
+                type: "input",
+                message: "What is the department for this role?"
+            }
+
+        ])
+
+
+    console.log("Inserting a new role...\n");
+    var query = connection.query()
+    // ??????????????????????????
+
+
+
+    // logs the actual query being run
+    console.log(query.sql);
+}
+
+
+function addEmployees() {
+    inquirer
+        .prompt([
+            {
+                name: "firstName",
+                type: "input",
+                message: "What is the employee's first name?"
+            },
+            {
+                name: "lastName",
+                type: "input",
+                message: "What is the employee's last name?"
+            },
+            {
+                name: "employeesRole",
+                type: "input",
+                message: "What is the employee's role?"
+            },
+            {
+                name: "employeesMgr",
+                type: "input",
+                message: "Who is the employee's manager"
+            }
+
+        ])
+
+
+    console.log("Inserting a new role...\n");
+    var query = connection.query()
+    // ??????????????????????????
+
+
+
+    // logs the actual query being run
+    console.log(query.sql);
+}
+// --------------------------------------------
 
 function viewSomething() {
     inquirer
@@ -69,7 +188,7 @@ function viewSomething() {
             ]
         })
         .then(function (answer) {
-            switch (answer.action) {
+            switch (answer.view) {
                 case "Departments":
                     viewDepts();
                     break;
@@ -117,4 +236,20 @@ function viewEmployees() {
         //   connection.end();
     });
 }
+// -------------------------------------------------
 // ADD THE UPDATEROLE FUNCTION HERE!!!!!!
+
+function updateRole() {
+    inquirer
+        .prompt([
+            {
+                name: "updateRole",
+                type: "input",
+                message: "What role do you want to update?"
+            }
+
+        ]);
+
+    // logs the actual query being run
+    console.log(query.sql);
+}
