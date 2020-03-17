@@ -3,25 +3,11 @@ var inquirer = require('inquirer');
 const cTable = require('console.table');
 
 
-// var connection = mysql.createConnection({
-//     host: "localhost",
-
-//     // Your port; if not 3306
-//     port: 3306,
-
-//     // Your username
-//     user: "root",
-
-//     // Your password
-//     password: "root",
-//     database: "employeeTracker_DB"
-//     // REMEBER TO ADD DATABASE HERE TO REFERENCE!!!!!!
-// });
 var connection = mysql.createConnection({
     host: "localhost",
 
     // Your port; if not 3306
-    port: 8889,
+    port: 3306,
 
     // Your username
     user: "root",
@@ -29,8 +15,8 @@ var connection = mysql.createConnection({
     // Your password
     password: "root",
     database: "employeeTracker_DB"
-    // REMEBER TO ADD DATABASE HERE TO REFERENCE!!!!!!
 });
+
 
 // connect to the mysql server and sql database
 connection.connect(function (err) {
@@ -107,18 +93,18 @@ function addDepts() {
                 type: "input",
                 message: "What department would you like to add?"
             }
-        ]).then(function(answers){
+        ]).then(function (answers) {
 
             console.log("Inserting a new department...\n");
             var query = connection.query("INSERT INTO department SET ?",
-            {
-                name: answers.deptName
-            },
-            function (err, res) {
-                if (err) throw err;
-                start();
-                //   connection.end();
-            })
+                {
+                    name: answers.deptName
+                },
+                function (err, res) {
+                    if (err) throw err;
+                    start();
+                    //   connection.end();
+                })
 
         })
 
@@ -132,80 +118,97 @@ function addRoles() {
         console.table(res);
         //res.map(function)
         inquirer
-        .prompt([
-            {
-                name: "title",
-                type: "input",
-                message: "What role would you like to add?"
-            },
-            {
-                name: "salary",
-                type: "number",
-                message: "What is the salary for this role?"
-            },
-            {
-                name: "department_id",
-                type: "input",
-                message: "What is the department for this role?"
-            },
-            // {
-            //     name: "department_id",
-            //     type: "list",
-            //     message: "What is the department for this role?",
-            //     choices: [{name: "sales", value: 1}]
-            // }
+            .prompt([
+                {
+                    name: "title",
+                    type: "input",
+                    message: "What role would you like to add?"
+                },
+                {
+                    name: "salary",
+                    type: "number",
+                    message: "What is the salary for this role?"
+                },
+                {
+                    name: "department_id",
+                    type: "input",
+                    message: "What is the department id for this role?"
+                },
+                // {
+                //     name: "department_id",
+                //     type: "list",
+                //     message: "What is the department for this role?",
+                //     choices: [{name: "sales", value: 1}]
+                // }
 
-        ]).then(function(answers){
+            ]).then(function (answers) {
 
-            console.log("Inserting a new role...\n");
-            var query = connection.query("INSERT INTO role SET ?",
-            answers,
-            function (err, res) {
-                if (err) throw err;
-                start();
-                //   connection.end();
+                console.log("Inserting a new role...\n");
+                var query = connection.query("INSERT INTO role SET ?",
+                    answers,
+                    function (err, res) {
+                        if (err) throw err;
+                        start();
+                        //   connection.end();
+                    })
+
             })
-
-        })
     });
 }
 
 
 function addEmployees() {
-    inquirer
-        .prompt([
-            {
-                name: "firstName",
-                type: "input",
-                message: "What is the employee's first name?"
-            },
-            {
-                name: "lastName",
-                type: "input",
-                message: "What is the employee's last name?"
-            },
-            {
-                name: "employeesRole",
-                type: "input",
-                message: "What is the employee's role?"
-            },
-            {
-                name: "employeesMgr",
-                type: "input",
-                message: "Who is the employee's manager"
-            }
 
-        ])
+    connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+        // Log all results of the SELECT statement
+        console.table(res);
 
 
-    console.log("Inserting a new role...\n");
-    var query = connection.query()
-    // ??????????????????????????
+        connection.query("SELECT * FROM employee", function (err, res) {
+            if (err) throw err;
+            // Log all results of the SELECT statement
+            console.table(res);
 
 
+            //res.map(function)
+            inquirer
+                .prompt([
+                    {
+                        name: "first_name",
+                        type: "input",
+                        message: "What is the employee's first name?"
+                    },
+                    {
+                        name: "last_name",
+                        type: "input",
+                        message: "What is the employee's last name?"
+                    },
+                    {
+                        name: "role_id",
+                        type: "input",
+                        message: "What is the employee's role id?"
+                    },
+                    {
+                        name: "manager_id",
+                        type: "input",
+                        message: "What is the employee id of their manager?"
+                    }
 
-    // logs the actual query being run
-    console.log(query.sql);
+                ]).then(function (answers) {
+
+
+                    console.log("Inserting a new employee...\n");
+                    var query = connection.query("INSERT INTO employee SET ?",
+                        answers,
+                        function (err, res) {
+                            if (err) throw err;
+                            start();
+                            //   connection.end();
+                        })
+                })
+        });
+    });
 }
 // --------------------------------------------
 
@@ -274,16 +277,105 @@ function viewEmployees() {
 // ADD THE UPDATEROLE FUNCTION HERE!!!!!!
 
 function updateRole() {
-    inquirer
-        .prompt([
-            {
-                name: "updateRole",
-                type: "input",
-                message: "What role do you want to update?"
-            }
 
-        ]);
+    connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+        // Log all results of the SELECT statement
+        console.table(res);
+        //res.map(function)
+        inquirer
+            .prompt([
+                {
+                    name: "chooseRoleField",
+                    type: "rawlist",
+                    message: "Would you like to update the title or salary?",
+                    choices: [
+                        "title",
+                        "salary"
+                    ]
+                }
 
-    // logs the actual query being run
-    console.log(query.sql);
+            ]).then(function (answer) {
+                switch (answer.view) {
+                    case "title":
+                        updateTitle();
+                        break;
+
+                    case "salary":
+                        updateSalary();
+                        break;
+                }
+            })
+            .then(
+                function updateTitle(answers) {
+                    inquirer
+                        .prompt([
+                            {
+                                name: "chooseRoleID",
+                                type: "input",
+                                message: "What is the id of the role you want to update?",
+                            },
+                            {
+                                name: "updateTitle",
+                                type: "input",
+                                message: "What should the new title be?"
+                            }
+                        ]).then(function (answers) {
+                            var query = connection.query(
+                                "UPDATE role SET ? WHERE ?",
+                                [
+                                    {
+                                        title: answers.updateTitle
+                                    },
+                                    {
+                                        id: answers.chooseRoleID
+                                    }
+                                ],
+
+                                function (err, res) {
+                                    if (err) throw err;
+                                    console.log(res.affectedRows + " products updated!\n");
+                                    start();
+                                }
+                            );
+
+                        })
+                })
+        function updateSalary(answers) {
+            inquirer
+                .prompt([
+                    {
+                        name: "chooseRoleID",
+                        type: "input",
+                        message: "What is the id of the role you want to update?",
+                    },
+                    {
+                        name: "updateSalary",
+                        type: "number",
+                        message: "What should the new salary be?"
+                    }
+                ]).then(function (answers) {
+                    var query = connection.query(
+                        "UPDATE role SET ? WHERE ?",
+                        [
+                            {
+                                salary: answers.updateSalary
+                            },
+                            {
+                                id: answers.chooseRoleID
+                            }
+                        ],
+
+                        function (err, res) {
+                            if (err) throw err;
+                            console.log(res.affectedRows + " products updated!\n");
+                            start();
+                        }
+                    );
+
+                });
+
+        }
+    });
+
 }
