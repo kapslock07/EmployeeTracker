@@ -1,23 +1,24 @@
 var mysql = require("mysql");
 var inquirer = require('inquirer');
 const cTable = require('console.table');
+const dotenv = require('dotenv').config()
 
 
 var connection = mysql.createConnection({
-    host: "localhost",
+    host: process.env.DB_HOST,
 
     // Your port; if not 3306
     port: 3306,
 
     // Your username
-    user: "root",
+    user: process.env.DB_USER,
 
     // Your password
-    password: "root",
+    password: process.env.DB_PASS,
     database: "employeeTracker_DB"
 });
 
-
+console.log(process.env.DB_HOST, process.env.DB_USER, process.env.DB_PASS)
 // connect to the mysql server and sql database
 connection.connect(function (err) {
     if (err) throw err;
